@@ -1,9 +1,11 @@
 const express = require("express");
 const { rateLimit } = require("express-rate-limit");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const { logger } = require("./logger");
 const { connect } = require("./config/mongo");
+const { userRoute } = require("./routes/user");
 const PORT = process.env.PORT;
 const app = express();
 const basicRateLimiter = rateLimit({
@@ -15,13 +17,15 @@ const basicRateLimiter = rateLimit({
 });
 app.use(basicRateLimiter);
 app.use(express.json());
+app.use(cookieParser());
 app.use((req, res, next) => {
-  logger.http("Request is:", {
+  logger.http("Request Received:", {
     url: req.originalUrl,
     method: req.method,
   });
   next();
 });
+app.use("/api/v1/users", userRoute);
 app.get("/", (req, res, next) => {
   res.json({ data: "ok" });
 });
@@ -39,5 +43,5 @@ connect()
     logger.error(error.message, {
       fullMessage: error,
     });
-    process.exit(1);
+    process.exit(0);
   });
