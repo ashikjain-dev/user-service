@@ -3,7 +3,8 @@ const { rateLimit } = require("express-rate-limit");
 require("dotenv").config();
 
 const { logger } = require("./logger");
-const PORT = process.env.PORT || 3000;
+const { connect } = require("./config/mongo");
+const PORT = process.env.PORT;
 const app = express();
 const basicRateLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -28,6 +29,15 @@ app.use((req, res, next) => {
   logger.info(`The page is not found.`);
   res.status(404).json({ data: "The page is not found" });
 });
-app.listen(PORT, () => {
-  logger.info(`The server is running on the port:${PORT}`);
-});
+connect()
+  .then(() => {
+    app.listen(PORT, () => {
+      logger.info(`The server is running on the port:${PORT}`);
+    });
+  })
+  .catch((error) => {
+    logger.error(error.message, {
+      fullMessage: error,
+    });
+    process.exit(1);
+  });
