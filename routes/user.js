@@ -1,5 +1,6 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 require("dotenv").config();
 const { getDB } = require("../config/mongo");
 const { logger } = require("../logger");
@@ -20,16 +21,19 @@ userRoute.post("/signup", validateSignup, async (req, res, next) => {
       .collection("users")
       .findOne({ email: email });
     if (isUserEmailExist) {
-      res.status(400).json({ data: "user email is already exist" });
+      res.status(409).json({ data: "user email is already exist" });
       logger.http("user email is already exist", {
         status: res.statusCode,
         email,
       });
       return;
     }
+    //hash the password before storing the database.
+    const hashPassword = await bcrypt.hash(password, 12);
+    console.log(hashPassword);
     const resFromDB = await db
       .collection("users")
-      .insertOne({ firstName, lastName, email, password });
+      .insertOne({ firstName, lastName, email, password: hashPassword });
     const payload = { userId: new ObjectId(resFromDB.insertedId) };
     const token = jwt.sign(payload, JWT_KEY, { expiresIn: "30m" });
     res.cookie("token", token, { maxAge: 30 * 60 * 1000 });
@@ -95,7 +99,11 @@ userRoute.post("/signin", validateSignin, async (req, res, next) => {
       });
       return;
     }
-    if (password !== isUserExist.password) {
+    const isPasswordMatched = await bcrypt.compare(
+      password,
+      isUserExist.password,
+    );
+    if (!isPasswordMatched) {
       res.status(401).json({ data: "email or password is not correct." });
       logger.http("email or password is not correct", {
         status: res.statusCode,

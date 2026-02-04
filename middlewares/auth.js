@@ -11,7 +11,6 @@ const authenticate = (req, res, next) => {
       logger.info("no token found in the cookie");
       return;
     }
-    console.log(jwt.verify(token, JWT_SECRET_KEY));
     const { userId } = jwt.verify(token, JWT_SECRET_KEY);
     req.userId = userId;
     next();

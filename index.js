@@ -41,7 +41,7 @@ connect()
   })
   .catch((error) => {
     logger.error(error.message, {
-      fullMessage: error,
+      stack: error.stack,
     });
     process.exit(0);
   });
