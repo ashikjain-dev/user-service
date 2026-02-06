@@ -2,6 +2,8 @@ ARG NODE_VERSION=20.17.0
 
 FROM node:${NODE_VERSION}-alpine
 
+RUN apk add --no-cache curl
+
 WORKDIR /usr/src/app
 
 # Copy package and package-lock.json files to workdir in the container
