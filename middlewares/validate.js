@@ -21,13 +21,13 @@ const validateSignup = (req, res, next) => {
     }
     if (validator.isEmpty(firstName) || String(firstName).length > 10) {
       res.status(400).json({
-        data: "first Name must contain atleast one character and less than 10 characters",
+        data: "first Name must contain at least one character and less than 10 characters",
       });
       return;
     }
     if (!isNaN(lastName) || String(lastName).length > 10) {
       res.status(400).json({
-        data: "last name must contain atleast one character and less than 10 characters",
+        data: "last name must contain at least one character and less than 10 characters",
       });
       return;
     }

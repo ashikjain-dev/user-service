@@ -22,8 +22,8 @@ userRoute.post("/signup", validateSignup, async (req, res, next) => {
       .collection("users")
       .findOne({ email: email });
     if (isUserEmailExist) {
-      res.status(409).json({ data: "user email is already exist" });
-      logger.http("user email is already exist", {
+      res.status(409).json({ data: "user email already exists" });
+      logger.http("user email already exists", {
         status: res.statusCode,
         email,
       });
@@ -121,7 +121,7 @@ userRoute.post("/signin", validateSignin, async (req, res, next) => {
     const payload = { userId: new ObjectId(isUserExist._id) };
     const token = jwt.sign(payload, JWT_KEY, { expiresIn: "30m" });
     res.cookie("token", token, { maxAge: 30 * 60 * 1000 });
-    res.json({ data: "successfully logged in" });
+    res.json({ data: "Successfully logged in" });
   } catch (error) {
     res.status(500).json({ data: "something went wrong" });
     logger.error(error.message, {
