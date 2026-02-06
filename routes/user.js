@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 require("dotenv").config();
 const { getDB } = require("../config/mongo");
 const { logger } = require("../logger");
+const { publishEvent } = require("../events/publisher");
 const {
   validateSignup,
   validateSignin,
@@ -30,7 +31,6 @@ userRoute.post("/signup", validateSignup, async (req, res, next) => {
     }
     //hash the password before storing the database.
     const hashPassword = await bcrypt.hash(password, 12);
-    console.log(hashPassword);
     const resFromDB = await db
       .collection("users")
       .insertOne({ firstName, lastName, email, password: hashPassword });
@@ -39,7 +39,15 @@ userRoute.post("/signup", validateSignup, async (req, res, next) => {
     res.cookie("token", token, { maxAge: 30 * 60 * 1000 });
     res.status(201).json({ data: resFromDB });
 
-    logger.http("user data is created in mongodb", {
+    //publish the event
+    publishEvent({
+      type: "USER_SIGNED_UP",
+      payload: {
+        email,
+        firstName,
+      },
+    });
+    logger.http("user signup is completed", {
       data: resFromDB,
       status: res.statusCode,
     });

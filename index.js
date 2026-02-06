@@ -26,6 +26,9 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/api/v1/users", userRoute);
+app.get("/health", (req, res, next) => {
+  res.status(200).json({ data: "ok,healthy!" });
+});
 app.get("/", (req, res, next) => {
   res.json({ data: "ok" });
 });
