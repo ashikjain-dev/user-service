@@ -6,6 +6,7 @@ require("dotenv").config();
 const { logger } = require("./logger");
 const { connect } = require("./config/mongo");
 const { userRoute } = require("./routes/user");
+const { errorHandler } = require("./middlewares/");
 const PORT = process.env.PORT;
 const app = express();
 const basicRateLimiter = rateLimit({
@@ -32,10 +33,14 @@ app.get("/health", (req, res, next) => {
 app.get("/", (req, res, next) => {
   res.json({ data: "ok" });
 });
+// 404 handler
 app.use((req, res, next) => {
-  logger.info(`The page is not found.`);
-  res.status(404).json({ data: "The page is not found" });
+  const error = new Error("The page is not found");
+  error.statusCode = 404;
+  next(error);
 });
+// Global Error Handler
+app.use(errorHandler);
 connect()
   .then(() => {
     app.listen(PORT, () => {

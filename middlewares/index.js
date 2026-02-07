@@ -1,3 +1,4 @@
 const { validateSignup, validateSignin } = require("./validate");
 const { authenticate } = require("./auth");
-module.exports = { validateSignup, validateSignin, authenticate };
+const { errorHandler } = require("./error");
+module.exports = { validateSignup, validateSignin, authenticate, errorHandler };
