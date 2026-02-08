@@ -35,7 +35,12 @@ userRoute.post("/signup", validateSignup, async (req, res, next) => {
     .insertOne({ firstName, lastName, email, password: hashPassword });
   const payload = { userId: new ObjectId(resFromDB.insertedId) };
   const token = jwt.sign(payload, JWT_KEY, { expiresIn: "30m" });
-  res.cookie("token", token, { maxAge: 30 * 60 * 1000 });
+  res.cookie("token", token, {
+    maxAge: 30 * 60 * 1000,
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none'
+  });
   res.status(201).json({ data: resFromDB });
 
   //publish the event
@@ -105,7 +110,12 @@ userRoute.post("/signin", validateSignin, async (req, res, next) => {
   }
   const payload = { userId: new ObjectId(isUserExist._id) };
   const token = jwt.sign(payload, JWT_KEY, { expiresIn: "30m" });
-  res.cookie("token", token, { maxAge: 30 * 60 * 1000 });
+  res.cookie("token", token, {
+    maxAge: 30 * 60 * 1000,
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none'
+  });
   res.json({ data: "Successfully logged in" });
 });
 
