@@ -1,4 +1,4 @@
-name: Simple Deploy to DigitalOcean
+name: Deploy User Service to DigitalOcean
 run-name: ${{ github.actor }} is deploying to DigitalOcean
 
 on:
