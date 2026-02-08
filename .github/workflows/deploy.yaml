@@ -25,10 +25,8 @@ jobs:
       - name: Deploy to Droplet
         run: |
           ssh -o StrictHostKeyChecking=no ashik@167.71.233.117 "
-            cd ${{ env.PROJECT_DIR }}
-            git fetch origin
-            git reset --hard origin/main
-            docker-compose down
-            docker-compose build
-            docker-compose up -d
+            set -e
+            cd ${{ env.PROJECT_DIR }} && git pull origin main
+            cd /apps
+            docker compose up -d --build
           "
