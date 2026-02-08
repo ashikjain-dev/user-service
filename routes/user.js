@@ -120,7 +120,12 @@ userRoute.post("/signin", validateSignin, async (req, res, next) => {
 });
 
 userRoute.get("/logout", async (req, res, next) => {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    path: '/'
+  });
   res.status(200).json({
     success: true,
     data: "Successfully logged out",
