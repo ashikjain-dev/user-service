@@ -7,7 +7,7 @@ on:
       - main
   
 env:
-  PROJECT_DIR: /apps/user-service
+  PROJECT_DIR: ~/apps/user-service
 
 jobs:
   deploy:
@@ -27,6 +27,6 @@ jobs:
           ssh -o StrictHostKeyChecking=no ashik@167.71.233.117 "
             set -e
             cd ${{ env.PROJECT_DIR }} && git pull origin main
-            cd /apps
+            cd ~/apps
             docker compose up -d --build
           "
