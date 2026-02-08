@@ -1,0 +1,34 @@
+name: Simple Deploy to DigitalOcean
+run-name: ${{ github.actor }} is deploying to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+  
+  env:
+    PROJECT_DIR: /apps/user-service
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.DO_SSH_KEY }}
+
+      - name: Deploy to Droplet
+        run: |
+          ssh -o StrictHostKeyChecking=no ashik@167.71.233.117 "
+            cd ${{ env.PROJECT_DIR }}
+            git fetch origin
+            git reset --hard origin/main
+            docker-compose down
+            docker-compose build
+            docker-compose up -d
+          "
