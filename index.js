@@ -10,6 +10,13 @@ const { userRoute } = require("./routes/user");
 const { errorHandler } = require("./middlewares/");
 const PORT = process.env.PORT;
 const app = express();
+
+const corsOrigin = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : "http://localhost:5173";
+app.use(cors({
+  origin: corsOrigin,
+  credentials: true
+}));
+
 const basicRateLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 10,
@@ -18,11 +25,7 @@ const basicRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 app.use(basicRateLimiter);
-const corsOrigin = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : "http://localhost:5173";
-app.use(cors({
-  origin: corsOrigin,
-  credentials: true
-}));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use((req, res, next) => {
