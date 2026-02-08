@@ -6,8 +6,8 @@ on:
     branches:
       - main
   
-  env:
-    PROJECT_DIR: /apps/user-service
+env:
+  PROJECT_DIR: /apps/user-service
 
 jobs:
   deploy:
