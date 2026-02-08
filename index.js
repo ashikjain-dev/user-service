@@ -1,6 +1,7 @@
 const express = require("express");
 const { rateLimit } = require("express-rate-limit");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 require("dotenv").config();
 
 const { logger } = require("./logger");
@@ -17,6 +18,10 @@ const basicRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 app.use(basicRateLimiter);
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use((req, res, next) => {
